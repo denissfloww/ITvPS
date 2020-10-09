@@ -1,10 +1,11 @@
 import spacy
 from string import punctuation
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 import pymorphy2
 from spacy.lang.ru import Russian
 from spacy_russian_tokenizer import RussianTokenizer, MERGE_PATTERNS
 from prettytable import PrettyTable
+from operator import itemgetter
 import re
 
 
@@ -70,7 +71,6 @@ def TableFiller(objs):
         x.add_row([ID, Token, NumbDoc, Count, POS])
     return x
 
-
 inputDocuments = []
 while True:
     inp = str(input())
@@ -78,8 +78,8 @@ while True:
         break
     else:
         inputDocuments.append(inp)
-print("Выберите тип сортировки. Сортировка по алфавиту / Сортировка по длине слова)")
-sortType = str(input())
+# print("Выберите тип сортировки: Сортировка по алфавиту / Сортировка по длине слова (1 / 2)")
+# sortType = str(input())
 docCounter = 1
 objs = defaultdict(list)
 counter = 1
@@ -107,4 +107,6 @@ for inp in inputDocuments:
             objs.pop(i[0])
 
     docCounter += 1
+# objs = OrderedDict(sorted(objs.items()))
+objs = OrderedDict(sorted(objs.items(), key=lambda item: len(item[0])))
 print(TableFiller(objs))
