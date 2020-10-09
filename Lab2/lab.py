@@ -78,6 +78,8 @@ while True:
         break
     else:
         inputDocuments.append(inp)
+print("Выберите тип сортировки. Сортировка по алфавиту / Сортировка по длине слова)")
+sortType = str(input())
 docCounter = 1
 objs = defaultdict(list)
 counter = 1
