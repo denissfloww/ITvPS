@@ -5,8 +5,8 @@ import pymorphy2
 from spacy.lang.ru import Russian
 from spacy_russian_tokenizer import RussianTokenizer, MERGE_PATTERNS
 from prettytable import PrettyTable
-from operator import itemgetter
 import re
+import csv
 
 
 def FillDict():
@@ -71,15 +71,31 @@ def TableFiller(objs):
         x.add_row([ID, Token, NumbDoc, Count, POS])
     return x
 
+
+def CsvImport(file_obj):
+    file_reader = csv.reader(r_file, delimiter=";")
+    documents = []
+    count = 0
+    for row in file_reader:
+        if not count < 2:
+            documents.append(row[4])
+        count += 1
+    return documents
+
+
+
+with open("reviews.csv", encoding='utf-8') as r_file:
+    documents = CsvImport(r_file)
+print("Введите номера документов через enter. Для окончания ввода введите stop")
 inputDocuments = []
 while True:
     inp = str(input())
     if inp == "stop":
         break
     else:
-        inputDocuments.append(inp)
-# print("Выберите тип сортировки: Сортировка по алфавиту / Сортировка по длине слова (1 / 2)")
-# sortType = str(input())
+        inputDocuments.append(documents[int(inp)])
+print("Выберите тип сортировки: Сортировка по алфавиту / Сортировка по длине слова (1 / 2)")
+sortType = str(input())
 docCounter = 1
 objs = defaultdict(list)
 counter = 1
@@ -107,6 +123,8 @@ for inp in inputDocuments:
             objs.pop(i[0])
 
     docCounter += 1
-# objs = OrderedDict(sorted(objs.items()))
-objs = OrderedDict(sorted(objs.items(), key=lambda item: len(item[0])))
+if sortType is "1":
+    objs = OrderedDict(sorted(objs.items()))
+else:
+    objs = OrderedDict(sorted(objs.items(), key=lambda item: len(item[0])))
 print(TableFiller(objs))
