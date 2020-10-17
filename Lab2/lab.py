@@ -72,7 +72,7 @@ def TableFiller(objs):
     return x
 
 
-def CsvImport(file_obj):
+def CsvImport(r_file):
     file_reader = csv.reader(r_file, delimiter=";")
     documents = []
     count = 0
@@ -81,7 +81,6 @@ def CsvImport(file_obj):
             documents.append(row[4])
         count += 1
     return documents
-
 
 
 with open("reviews.csv", encoding='utf-8') as r_file:
