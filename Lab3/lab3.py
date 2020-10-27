@@ -29,8 +29,9 @@ def ExportCsv(dict, counter):
         first_str = "Term "
         for i in range(1, counter):
             first_str += "Text:" + str(i) + " "
+
         first_str = first_str.split(" ")
-        a_pen.writerow(first_str)
+        a_pen.writerow(first_str[:-1])
         for i, doc in dict.items():
             str_r = [i] + doc
             a_pen.writerow(str_r)
@@ -52,12 +53,10 @@ def TFIDF(dict, counter):
             if elem > 0:
                 count +=1
         newDict[i].append(math.log(counter/count))
-    print(newDict)
     itogDict = defaultdict(list)
     for word in n:
         for i, val in objs.items():
             itogDict[word].append(newDict[word][0] * val[0].count(word) / len(val[0]))
-    print(itogDict)
     return itogDict
 
 
