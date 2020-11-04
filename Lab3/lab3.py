@@ -4,6 +4,9 @@ import re
 from collections import defaultdict
 from string import punctuation
 from nltk.stem.snowball import SnowballStemmer
+import spacy
+from spacy_russian_tokenizer import RussianTokenizer, MERGE_PATTERNS
+from spacy.lang.ru import Russian
 
 
 def DocImport(r_file):
@@ -70,6 +73,11 @@ def Boolean(dict):
                 boolDict[i].append(0)
     return boolDict
 
+def Tokenizer(inp):
+    nlp = Russian()
+    russian_tokenizer = RussianTokenizer(nlp, MERGE_PATTERNS)
+    nlp.add_pipe(russian_tokenizer, name='russian_tokenizer')
+    return nlp(inp)
 
 stemmer = SnowballStemmer("russian")
 documents = DocImport("dataset.txt")
@@ -90,11 +98,14 @@ for inp in inputDocuments:
     inp = PunctuationReplace(inp)
     inp = re.sub('\n', '', inp)
     inp = re.sub(r'\s{2}', ' ', inp)
-    inp = re.split('\s', inp)
-    for i in range(len(inp)):
-        inp[i] = stemmer.stem(inp[i])
-    objs[counter].append(inp)
-    doc += inp
+    inp = Tokenizer(inp)
+    doc = []
+    for token in list(inp):
+        token = token.lemma_
+        token = stemmer.stem(token)
+        doc.append(token)
+    objs[counter].append(doc)
+    doc += doc
     counter += 1
 n = []
 for i in doc:
