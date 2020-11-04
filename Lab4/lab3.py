@@ -109,7 +109,9 @@ for i in doc:
             n.append(i)
 TFModelDoc = TF(n, objs)
 Export.ExportCsv(TFModelDoc, counter)
-query = u"Веб Всемирно известный физик-теоретик Стивен Хокинг уверен, что Марс будет колонизирован людьми в ближайшее столетие, сообщает Rusargument."
+print("Введите запрос")
+query = str(input())
+#query = u"Веб Всемирно известный физик-теоретик Стивен Хокинг уверен, что Марс будет колонизирован людьми в ближайшее столетие, сообщает Rusargument."
 query = ToLowerCase(query)
 query = PunctuationReplace(query)
 query = Tokenizer(query)
