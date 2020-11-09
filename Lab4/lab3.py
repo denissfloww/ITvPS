@@ -1,8 +1,6 @@
-import csv
 import math
 import re
 from collections import defaultdict
-from string import punctuation
 from nltk.stem.snowball import SnowballStemmer
 import spacy
 from spacy_russian_tokenizer import RussianTokenizer, MERGE_PATTERNS
@@ -25,9 +23,10 @@ def ToLowerCase(s):
 
 
 def PunctuationReplace(inp):
-    inp = ''.join(c for c in inp if c not in punctuation)
-    inp = re.sub('[-«»—]', ' ', inp)
+    # inp = ''.join(c for c in inp if c not in punctuation)
+    inp = re.sub('[-«»—,.()\[\]"%:;?]', ' ', inp)
     inp = re.sub('\n', '', inp)
+    inp = re.sub(r'\s{2,3}', ' ', inp)
     inp = re.sub(r'\s{2}', ' ', inp)
     return inp
 
@@ -36,6 +35,7 @@ def TF(n, objs):
     dict = defaultdict(list)
     for word in n:
         for i, val in objs.items():
+            val[0] = sorted(val[0])
             dict[word].append(val[0].count(word))
     return dict
 
@@ -79,6 +79,13 @@ def LemmAndStem(inp):
         doc.append(token)
     return doc
 
+def ObjsCleaner(objs):
+    for key, val in objs.items():
+        for i in val[0]:
+            if i is ' ' or i is '  ':
+                val[0].remove(i)
+    return objs
+
 stemmer = SnowballStemmer("russian")
 documents = DocImport("dataset.txt")
 print("Введите номера документов через enter. Для окончания ввода введите stop")
@@ -93,37 +100,31 @@ while True:
         inputDocuments.append(documents[int(inp)])
 objs = defaultdict(list)
 counter = 1
-doc = []
+docs = []
 for inp in inputDocuments:
     inp = ToLowerCase(inp)
     inp = PunctuationReplace(inp)
     inp = Tokenizer(inp)
     doc = LemmAndStem(inp)
     objs[counter].append(doc)
-    doc += doc
+    docs += doc
     counter += 1
 n = []
-for i in doc:
-    if i not in n:
-        if i != "":
-            n.append(i)
+[n.append(item) for item in docs if item not in n]
+objs = ObjsCleaner(objs)
 TFModelDoc = TF(n, objs)
 Export.ExportCsv(TFModelDoc, counter)
 print("Введите запрос")
 query = str(input())
-#query = u"Веб Всемирно известный физик-теоретик Стивен Хокинг уверен, что Марс будет колонизирован людьми в ближайшее столетие, сообщает Rusargument."
 query = ToLowerCase(query)
 query = PunctuationReplace(query)
 query = Tokenizer(query)
-doc = LemmAndStem(query)
-n = []
-for i in doc:
-    if i not in n:
-        if i != "":
-            n.append(i)
-objs = defaultdict(list)
-objs[1].append(doc)
-query = TF(n, objs)
+docs2 = LemmAndStem(query)
+n2 = []
+[n2.append(item) for item in docs2 if item not in n2]
+objs2 = defaultdict(list)
+objs2[1].append(docs2)
+query = TF(n2, objs2)
 cos = Measures.Cos(query, TFModelDoc, counter - 1)
 jacc = Measures.Jaccarda(query, TFModelDoc, counter - 1)
 dice = Measures.Dice(query, TFModelDoc, counter - 1)
