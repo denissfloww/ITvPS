@@ -62,4 +62,11 @@ for key, value in test.items():
     Udocs[counter].append(value)
     counter += 1
 
+Un = []
+for i, val in Udocs.items():
+    [Un.append(item) for item in val[0] if item not in Un]
+Utf = VecModel.TF(Un, UdocForClasses)
 res = NaivBayes.Pcd(UdocForClasses, pwcdict)
+
+for key, val in res.items():
+    print(val)
