@@ -22,13 +22,15 @@ def ImportTestDocuments(file):
     dict = defaultdict(list)
     with open(file, encoding='utf-8') as r_file:
         file_reader = csv.reader(r_file, delimiter=";")
+        classArray = []
         count = 0
         for row in file_reader:
             if row[3] == "class":
                 continue
             dict[count].append(row[1] + " " + row[2])
+            classArray.append(int(row[3]))
             count += 1
-    return dict
+    return dict, classArray
 
 
 def Import(file = "pwc.csv"):
