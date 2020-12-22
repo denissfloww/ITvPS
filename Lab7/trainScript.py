@@ -14,6 +14,6 @@ for key, val in doc.items():
     val[0] = PreProcessing.LemmAndStem(val[0])
 universum = VecModel.MakeUniversum(doc)
 tfdict = VecModel.TF(universum, doc)
-tfidfDict = VecModel.TFIDF(tfdict, len(doc), universum, doc)
+tfidfDict = VecModel.TFIDF(tfdict, len(doc), universum, doc, 1)
 res = Roccio.RoccioTrain(countDocInClass, tfidfDict, docClass)
 Export.Export("roccio.csv", res)

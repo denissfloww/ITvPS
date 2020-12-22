@@ -22,14 +22,15 @@ def RoccioCalc(tfidf, roccioVal, testDocCount, roccioClassCount):
         tokenAndMdict = defaultdict(list)
         for key , val in tfidf.items():
             for j in range(roccioClassCount):
-                M = (float(roccioVal[key][j]) - float(val[i])) ** 2
-                tokenAndMdict[key].append(M)
+                if key in roccioVal.keys():
+                    MD = (float(roccioVal[key][j]) - float(val[i])) ** 2
+                    tokenAndMdict[key].append(MD)
         for k in range(roccioClassCount):
-            M = 0
+            U = 0
             for key2 , val2 in tokenAndMdict.items():
-                M += float(val2[k])
-            M = math.sqrt(M)
-            resDict[k].append(M)
+                U += float(val2[k])
+            U = math.sqrt(U)
+            resDict[k].append(U)
     return  resDict
 
 

@@ -1,5 +1,8 @@
 import math
 from collections import defaultdict
+import Export
+import Import
+
 
 def MakeUniversum(dosc):
     n = []
@@ -16,18 +19,23 @@ def TF(n, objs):
     return dict
 
 
-def TFIDF(dict, counter, n, objs):
+def TFIDF(dict, counter, n, objs, export = 0, idfBool = 0):
     newDict = defaultdict(list)
-    for i, doc in dict.items():
-        count = 0
-        for elem in doc:
-            if elem > 0:
-                count +=1
-        newDict[i].append(math.log(counter/count))
+    if idfBool == 1:
+        newDict = Import.Import("idf.csv")
+    else:
+        for i, doc in dict.items():
+            count = 0
+            for elem in doc:
+                if elem > 0:
+                    count +=1
+            newDict[i].append(math.log(counter/count))
+    if export == 1:
+        Export.Export("idf.csv",newDict)
     itogDict = defaultdict(list)
     for word in n:
         for i, val in objs.items():
-            itogDict[word].append(newDict[word][0] * val[0].count(word) / len(val[0]))
+            itogDict[word].append(float(newDict[word][0]) * val[0].count(word) / len(val[0]))
     return itogDict
 
 

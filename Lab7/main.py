@@ -16,11 +16,14 @@ for key, val in testValues.items():
     val[0] = PreProcessing.LemmAndStem(val[0])
 universum = VecModel.MakeUniversum(testValues)
 tfdict = VecModel.TF(universum, testValues)
-tfidfDict = VecModel.TFIDF(tfdict, len(testValues), universum, testValues)
+tfidfDict = VecModel.TFIDF(tfdict, len(testValues), universum, testValues, 0, 1)
 roccioClassCount = 0
 for key, val in roccioValues.items():
     roccioClassCount = len(val)
     break
 res = Roccio.RoccioCalc(tfidfDict, roccioValues, len(testValues), roccioClassCount)
+classes = ['sport_all.txt','tech_all.txt' ]
+count = 0
 for key, val in res.items():
-    print(val)
+    print(classes[count]+ ":" + str(val))
+    count+=1
